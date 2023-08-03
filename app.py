@@ -69,7 +69,7 @@ def verify_password(plain_password: str, hashed_password: str):
 class UserRegister(BaseModel):
     username: str = Field(..., min_length=5, max_length=50)
     email: EmailStr
-    password: str = Field(..., min_length=8, pattern="^[A-Za-z\d@$!%*?&]{8,}$")
+    password: str = Field(..., min_length=8)
     full_name: str = Field(..., max_length=100)
     age: int = Field(..., gt=0)
     gender: str = Field(..., max_length=10)
@@ -127,7 +127,7 @@ def register_user(user_data: UserRegister):
         raise HTTPException(status_code=400, detail=ErrorResponse(code="EMAIL_EXISTS", message="The provided email is already registered. Please use a different email address."))
     
     # Additional validations
-    if not re.match(r"^[A-Za-z\d@$!%*?&]{8,}$", user_data.password):
+    if not user_data.password:
         raise HTTPException(status_code=400, detail=ErrorResponse(code="INVALID_PASSWORD", message="The provided password does not meet the requirements. Password must be at least 8 characters long and contain a mix of uppercase and lowercase letters, numbers, and special characters."))
 
     if user_data.age <= 0:
